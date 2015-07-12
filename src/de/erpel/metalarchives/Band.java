@@ -2,7 +2,7 @@ package de.erpel.metalarchives;
 
 public class Band {
 	private final int id;
-	private final boolean summary;
+	private boolean summary;
 	private String name;
 	private String country;//TODO Country
 	private String countryShort;
@@ -21,9 +21,9 @@ public class Band {
 	//similar
 	//links
 	
-	Band(int id, boolean summary) {
+	Band(int id) {
 		this.id = id;
-		this.summary = summary;
+		this.summary = false;
 	}
 	
 	public String getName() {
@@ -118,7 +118,33 @@ public class Band {
 		return this.id;
 	}
 	
+	/**
+	 * if true: only {@link Band#getId()}, {@link Band#getName()},
+	 * {@link Band#getCountry()}, {@link Band#getGenre()} give results
+	 */
 	public boolean isSummary() {
 		return this.summary;
+	}
+	
+	public void setSummary(boolean summary) {
+		this.summary = summary;
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("%s, %s, %s", this.name, this.country, this.genre);
+	}
+	
+	@Override
+	public int hashCode() {
+		return Integer.hashCode(this.id);
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Band) {
+			return ((Band) obj).id == this.id;
+		}
+		return false;
 	}
 }
