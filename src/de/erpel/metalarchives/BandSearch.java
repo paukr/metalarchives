@@ -1,6 +1,7 @@
 package de.erpel.metalarchives;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jsoup.Jsoup;
@@ -12,23 +13,23 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 
-class BandNameSearch {
-	private static String BAND_SEARCH = "http://www.metal-archives.com/search/ajax-band-search/?field=name&query=%s";
+class BandSearch {
+	private static String BAND_SEARCH = "http://www.metal-archives.com/search/ajax-band-search/?field=name&query=%s&iDisplayStart=%d";
 	private static String BAND_READ_MORE = "http://www.metal-archives.com/band/read-more/id/%d";
 	private static String BAND = "http://www.metal-archives.com/bands/id/%d";
-	private static Logger LOGGER = LoggerFactory
-		.getLogger(BandNameSearch.class);
-		
-	public static List<Band> search(String search) throws IOException, InterruptedException {
+	private static Logger LOGGER = LoggerFactory.getLogger(BandSearch.class);
+	
+	public static List<Band> search(String search) throws IOException {
 		LOGGER.debug("band search: {}", search);
 		search = search.replaceAll("\\s", "+");
-		String json = Jsoup.connect(String.format(BAND_SEARCH, search))
-			.ignoreContentType(true)
-			.execute()
-			.body();
-			
-		JsonResult result = new Gson().fromJson(json, JsonResult.class);
-		List<Band> bands = result.getBands();
+		
+		List<Band> bands = new ArrayList<>();
+		int toFetch = 1;
+		while (toFetch > 0) {
+			JsonResult result = search(search, bands.size());
+			bands.addAll(result.getBands());
+			toFetch = result.getTotalRecords() - bands.size();
+		}		
 		if (bands.size() == 1) {
 			Band band = getBand(bands.get(0).getId());
 			bands.clear();
@@ -37,7 +38,15 @@ class BandNameSearch {
 		return bands;
 	}
 	
-	public static Band getBand(int id) throws IOException {
+	private static JsonResult search(String search, int startIndex) throws IOException {
+		String json = Jsoup.connect(String.format(BAND_SEARCH, search, startIndex))
+				.ignoreContentType(true)
+				.execute()
+				.body();
+		return new Gson().fromJson(json, JsonResult.class);
+	}
+	
+	public static Band getBand(long id) throws IOException {
 		Document bandDocument = Jsoup.connect(String.format(BAND, id)).get();
 		return parseBand(bandDocument);
 	}

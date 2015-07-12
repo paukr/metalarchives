@@ -1,7 +1,7 @@
 package de.erpel.metalarchives;
 
 public class Band {
-	private final int id;
+	private final long id;
 	private boolean summary;
 	private String name;
 	private String country;//TODO Country
@@ -21,7 +21,7 @@ public class Band {
 	//similar
 	//links
 	
-	Band(int id) {
+	Band(long id) {
 		this.id = id;
 		this.summary = false;
 	}
@@ -114,7 +114,7 @@ public class Band {
 		this.description = description;
 	}
 	
-	public int getId() {
+	public long getId() {
 		return this.id;
 	}
 	
@@ -137,7 +137,7 @@ public class Band {
 	
 	@Override
 	public int hashCode() {
-		return Integer.hashCode(this.id);
+		return Long.hashCode(this.id);
 	}
 	
 	@Override

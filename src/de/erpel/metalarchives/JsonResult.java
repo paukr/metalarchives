@@ -8,7 +8,6 @@ import org.jsoup.nodes.Element;
 
 class JsonResult {
 	private String error;
-	@SuppressWarnings("unused")
 	private int iTotalRecords;
 	@SuppressWarnings("unused")
 	private int iTotalDisplayRecords;
@@ -22,6 +21,10 @@ class JsonResult {
 	
 	public String getError() {
 		return this.error;
+	}
+	
+	public int getTotalRecords() {
+		return this.iTotalRecords;
 	}
 	
 	public List<Band> getBands() {
